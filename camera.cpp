@@ -121,10 +121,11 @@ void Camera::quaternionRotate(GLFWwindow *window, double x, double y) {
     s_context->m_yaw += xoffset;
     s_context->m_pitch += yoffset;
 
-    if (s_context->m_pitch > 89.0f)
-        s_context->m_pitch = 89.0f;
-    if (s_context->m_pitch < -89.0f)
-        s_context->m_pitch = -89.0f;
+    // probably don't need this
+    //    if (s_context->m_pitch > 89.0f)
+    //        s_context->m_pitch = 89.0f;
+    //    if (s_context->m_pitch < -89.0f)
+    //        s_context->m_pitch = -89.0f;
 
     glm::vec3 yAxis = glm::vec3(0, 1, 0);
     // Rotate the view vector by the horizontal angle around the vertical axis
