@@ -33,7 +33,6 @@ private:
     glm::vec3 m_upAxis;
     glm::vec3 m_position;
     glm::vec3 m_target{};
-    glm::vec3 m_r{};
     glm::vec3 m_direction{};
 
     static glm::vec3 rotateVector(float angle, glm::vec3 rotationAxis, glm::vec3 vectorToRotate);
