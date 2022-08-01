@@ -26,7 +26,7 @@ enum Movement {
 
 class Camera {
 private:
-    bool eulerMode = true;
+    bool eulerMode = false;
     float m_mouseSensitivity;
     float m_velocity;
     glm::vec3 m_rightAxis{};

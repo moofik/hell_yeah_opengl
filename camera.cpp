@@ -105,6 +105,7 @@ void Camera::quaternionRotate(GLFWwindow *window, double x, double y) {
         s_context->m_firstMouse = false;
     }
 
+
     auto xoffset = (float) (x - s_context->m_mouseLastX);
     auto yoffset = (float) (s_context->m_mouseLastY - y);
     s_context->m_mouseLastX = (float) x;
@@ -115,27 +116,13 @@ void Camera::quaternionRotate(GLFWwindow *window, double x, double y) {
     yoffset *= sensitivity;
 
     // обеспечим камере плавное движение, не будем увеличивать угол поворота на большой градус
-    if (xoffset < -s_context->m_yawMaxRate) {
-        xoffset = -s_context->m_yawMaxRate;
-    } else if (xoffset > s_context->m_yawMaxRate) {
-        xoffset = s_context->m_yawMaxRate;
-    }
 
-    if (yoffset < -s_context->m_pitchMaxRate) {
-        yoffset = -s_context->m_pitchMaxRate;
-    } else if (yoffset > s_context->m_pitchMaxRate) {
-        yoffset = s_context->m_pitchMaxRate;
-    }
 
     s_context->m_yaw += xoffset;
     s_context->m_pitch += yoffset;
 
     // чтобы камера не застрявала на слишком больших углах поворота, их надо скорректировать
-    if (s_context->m_pitch > .08f) {
-        s_context->m_pitch -= .08f;
-    } else if (s_context->m_pitch < -.08f) {
-        s_context->m_pitch += .08f;
-    }
+
     s_context->m_pitch *= 0.1;
     s_context->m_yaw *= 0.1;
 
