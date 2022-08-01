@@ -42,7 +42,9 @@ private:
 public:
     static Camera *s_context;
     float m_yaw;
+    float m_yawMaxRate;
     float m_pitch;
+    float m_pitchMaxRate;
     float m_mouseLastX;
     float m_mouseLastY;
     bool m_firstMouse;
@@ -51,7 +53,7 @@ public:
     Camera(float speed,
            int width,
            int height,
-           glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f),
+           glm::vec3 position = glm::vec3(0.0f, 0.0f, 4.0f),
            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
            glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f)
     );

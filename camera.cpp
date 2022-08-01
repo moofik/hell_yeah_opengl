@@ -35,11 +35,7 @@ Camera::Camera(
 }
 
 glm::mat4 Camera::getLookAtMatrix() {
-    if (eulerMode) {
-        m_r = m_position + m_frontAxis;
-    }
-
-    glm::mat4 view = glm::lookAt(m_position, m_r, m_upAxis);
+    glm::mat4 view = glm::lookAt(m_position, m_position + m_frontAxis, m_upAxis);
     return view;
 }
 
@@ -114,30 +110,42 @@ void Camera::quaternionRotate(GLFWwindow *window, double x, double y) {
     s_context->m_mouseLastX = (float) x;
     s_context->m_mouseLastY = (float) y;
 
-    float sensitivity = 0.1f;
+    float sensitivity = .08f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
+
+    // обеспечим камере плавное движение, не будем увеличивать угол поворота на большой градус
+    if (xoffset < -s_context->m_yawMaxRate) {
+        xoffset = -s_context->m_yawMaxRate;
+    } else if (xoffset > s_context->m_yawMaxRate) {
+        xoffset = s_context->m_yawMaxRate;
+    }
+
+    if (yoffset < -s_context->m_pitchMaxRate) {
+        yoffset = -s_context->m_pitchMaxRate;
+    } else if (yoffset > s_context->m_pitchMaxRate) {
+        yoffset = s_context->m_pitchMaxRate;
+    }
 
     s_context->m_yaw += xoffset;
     s_context->m_pitch += yoffset;
 
-    // probably don't need this
-    //    if (s_context->m_pitch > 89.0f)
-    //        s_context->m_pitch = 89.0f;
-    //    if (s_context->m_pitch < -89.0f)
-    //        s_context->m_pitch = -89.0f;
+    // чтобы камера не застрявала на слишком больших углах поворота, их надо скорректировать
+    if (s_context->m_pitch > .08f) {
+        s_context->m_pitch -= .08f;
+    } else if (s_context->m_pitch < -.08f) {
+        s_context->m_pitch += .08f;
+    }
+    s_context->m_pitch *= 0.1;
+    s_context->m_yaw *= 0.1;
 
-    glm::vec3 yAxis = glm::vec3(0, 1, 0);
-    // Rotate the view vector by the horizontal angle around the vertical axis
-    glm::vec3 view = glm::vec3(1, 0, 0);
-    view = glm::normalize(rotateVector(s_context->m_yaw, yAxis, view));
-
-    // Rotate the view vector by the vertical angle around the horizontal axis
-    glm::vec3 xAxis = glm::normalize(glm::cross(yAxis, view));
-    view = glm::normalize(rotateVector(s_context->m_pitch, xAxis, view));
-
-    s_context->m_r = view;
-    s_context->m_upAxis = glm::normalize(glm::cross(s_context->m_r, xAxis));
+    glm::vec3 axis = glm::cross(s_context->m_direction, s_context->m_upAxis);
+    glm::quat pitchQuat = glm::angleAxis(s_context->m_pitch, axis);
+    glm::quat yawQuat = glm::angleAxis(s_context->m_yaw, -s_context->m_upAxis);
+    glm::quat temp = glm::cross(pitchQuat, yawQuat);
+    temp = glm::normalize(temp);
+    s_context->m_direction = glm::rotate(temp, s_context->m_direction);
+    s_context->m_frontAxis = glm::normalize(s_context->m_direction);
 }
 
 glm::vec3 Camera::rotateVector(float angle, const glm::vec3 rotationAxis, const glm::vec3 vectorToRotate) {
